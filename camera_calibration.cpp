@@ -29,6 +29,7 @@ public:
     enum Pattern { NOT_EXISTING, CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
     enum InputType {INVALID, CAMERA, VIDEO_FILE, IMAGE_LIST};
 
+    // point the fs variable to the FileStorage memory location
     void write(FileStorage& fs) const                        //Write serialization for this class
     {
         fs << "{" << "BoardSize_Width"  << boardSize.width
@@ -278,9 +279,11 @@ int main(int argc, char* argv[])
         imageSize = view.size();  // Format input image.
         if( s.flipVertical )    flip( view, view, 0 );
 
+	// initialize buffer for image points
         vector<Point2f> pointBuf;
 
         bool found;
+	// detect corners in image space
         switch( s.calibrationPattern ) // Find feature points on the input format
         {
         case Settings::CHESSBOARD:
@@ -416,6 +419,7 @@ static double computeReprojectionErrors( const vector<vector<Point3f> >& objectP
     return std::sqrt(totalErr/totalPoints);
 }
 
+// calculate corners in object space
 static void calcBoardCornerPositions(Size boardSize, float squareSize, vector<Point3f>& corners,
                                      Settings::Pattern patternType /*= Settings::CHESSBOARD*/)
 {
@@ -427,6 +431,8 @@ static void calcBoardCornerPositions(Size boardSize, float squareSize, vector<Po
     case Settings::CIRCLES_GRID:
         for( int i = 0; i < boardSize.height; ++i )
             for( int j = 0; j < boardSize.width; ++j )
+		// add corners to the calibration matrix. Assumes that z = 0.
+		// Point3f = corners in object space.
                 corners.push_back(Point3f(float( j*squareSize ), float( i*squareSize ), 0));
         break;
 
@@ -445,18 +451,31 @@ static bool runCalibration( Settings& s, Size& imageSize, Mat& cameraMatrix, Mat
                             vector<float>& reprojErrs,  double& totalAvgErr)
 {
 
+    // set fx = 0 for fixed aspect ratio
     cameraMatrix = Mat::eye(3, 3, CV_64F);
     if( s.flag & CV_CALIB_FIX_ASPECT_RATIO )
         cameraMatrix.at<double>(0,0) = 1.0;
 
+    // initialize distortion coefficients as zero
     distCoeffs = Mat::zeros(8, 1, CV_64F);
 
+    // Point3f = corners in object space
+    // vec3 = 3D vector
     vector<vector<Point3f> > objectPoints(1);
     calcBoardCornerPositions(s.boardSize, s.squareSize, objectPoints[0], s.calibrationPattern);
 
     objectPoints.resize(imagePoints.size(),objectPoints[0]);
 
-    //Find intrinsic and extrinsic camera parameters
+    // Find intrinsic and extrinsic camera parameters
+    // rvecs = rotation vectors, mapping object points to image points
+    // tvecs = translation vectors, "
+    // s.flag includes input parameters.
+    //		--assume zero tangential distortion
+    //		--fix focal length aspect ratio
+    //		--fix principal point
+    // rms returns average reprojection error
+    // reprojection error = image point location calculated by transformation function
+    //				- image point location detected by algorithm
     double rms = calibrateCamera(objectPoints, imagePoints, imageSize, cameraMatrix,
                                  distCoeffs, rvecs, tvecs, s.flag|CV_CALIB_FIX_K4|CV_CALIB_FIX_K5);
 
