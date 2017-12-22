@@ -29,12 +29,16 @@ for file in filename_list:
 log = open('calibration_log.txt', 'w')
 log.write("Corners not found for these images: \n")
 
+print "file start"
+
 # read images
 for fname in filepath_list:
+    print "reading: ", fname
     img = cv2.imread(fname,0)
 
     # Find the chess board corners
     ret, corners = cv2.findChessboardCorners(img, (col,row),None)
+    print ret
 
     # If found, add object points, image points (after refining them)
     if ret == True:
@@ -57,6 +61,8 @@ for fname in filepath_list:
 
 
 cv2.destroyAllWindows()
+
+print "Calculating camera intrinsics......................................................"
 
 # calibrate camera
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, img.shape[::-1],None,None)

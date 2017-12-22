@@ -66,14 +66,15 @@ for i, fname in enumerate(filepath_list):
     mapx,mapy = cv2.initUndistortRectifyMap(mtx,dist,None,newcameramtx,(w,h),5)
     dst = cv2.remap(img,mapx,mapy,cv2.INTER_LINEAR)
 
+    # crop the image
+    #x,y,w,h = roi
+    #dst = dst[y:y+h, x:x+w]
+
     new_filename = "undistorted_" + str(i) + ".png"
     cv2.imwrite(new_filename,dst)
 
 
-# crop the image
-#x,y,w,h = roi
-#dst = dst[y:y+h, x:x+w]
-#cv2.imwrite('calibresult.png',dst)
+
 
 
 
