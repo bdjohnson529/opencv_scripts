@@ -1,3 +1,8 @@
+#####
+# Input arguments : 	argv[1] = settings file
+#			argv[2] = distorted image directory
+#####
+
 
 import numpy
 import cv2

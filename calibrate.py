@@ -1,3 +1,7 @@
+#####
+# Input arguments : argv[1] = image directory
+#####
+
 import numpy
 import cv2
 import glob

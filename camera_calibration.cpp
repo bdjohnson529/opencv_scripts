@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <time.h>
 #include <stdio.h>
@@ -489,6 +490,18 @@ static bool runCalibration( Settings& s, Size& imageSize, Mat& cameraMatrix, Mat
     return ok;
 }
 
+static void save_txt_intrinsics( Mat& cameraMatrix, Mat& distCoeffs)
+{
+    ofstream output_file;
+    output_file.open ("results_cpp.txt");
+    output_file << "Camera calibration results.\n";
+    output_file << "Camera matrix:\n";
+    output_file << cameraMatrix;
+    output_file << "\nDistortion coefficients:\n";
+    output_file << distCoeffs;
+    output_file.close();
+}
+
 // Print camera parameters to the output file
 static void saveCameraParams( Settings& s, Size& imageSize, Mat& cameraMatrix, Mat& distCoeffs,
                               const vector<Mat>& rvecs, const vector<Mat>& tvecs,
@@ -582,5 +595,6 @@ bool runCalibrationAndSave(Settings& s, Size imageSize, Mat&  cameraMatrix, Mat&
     if( ok )
         saveCameraParams( s, imageSize, cameraMatrix, distCoeffs, rvecs ,tvecs, reprojErrs,
                             imagePoints, totalAvgErr);
+        save_txt_intrinsics( cameraMatrix, distCoeffs);
     return ok;
 }
