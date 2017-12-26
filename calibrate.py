@@ -14,7 +14,7 @@ col = 5
 # termination criteria
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
-# prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
+# prepare object points
 objp = numpy.zeros((row*col,3), numpy.float32)
 objp[:,:2] = numpy.mgrid[0:col,0:row].T.reshape(-1,2)
 
@@ -29,11 +29,11 @@ filename_list = sorted(os.listdir(directory))
 for file in filename_list:
     filepath_list.append( os.path.join(directory + file) )
 
-# error logging
+# inititalize error log file
 log = open('calibration_log.txt', 'w')
 log.write("Corners not found for these images: \n")
 
-print "file start"
+print "begin processing images..........................."
 
 # read images
 for fname in filepath_list:
@@ -59,7 +59,6 @@ for fname in filepath_list:
         #cv2.waitKey(500)
     else:
         print "corners not found: ", fname
-        # log errors
         log.write("\nrm")
         log.write(fname)
 
