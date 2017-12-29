@@ -49,7 +49,7 @@ filename_list = sorted(os.listdir(directory))
 for file in filename_list:
     filepath_list.append( os.path.join(directory + file) )
 
-def undistort(img_path):
+def undistort(img_path, i):
     print img_path
     # read distorted image
     img = cv2.imread(img_path)
@@ -57,11 +57,15 @@ def undistort(img_path):
 
     map1, map2 = cv2.fisheye.initUndistortRectifyMap(K, D, np.eye(3), K, DIM, cv2.CV_16SC2)
     undistorted_img = cv2.remap(img, map1, map2, interpolation=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
-    cv2.imshow("undistorted", undistorted_img)
-    cv2.imwrite("undistorted_%i",undistorted_img)
-    cv2.waitKey(1000)
+    #cv2.imshow("undistorted", undistorted_img)
+    #cv2.imwrite("undistorted.png,undistorted_img)
+    cv2.imwrite("undistorted_{}.png".format(i),undistorted_img)
+    print i
+    #cv2.waitKey(1000)
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
+    i = 0
     for fname in filepath_list:
-        undistort(fname)
+        undistort(fname, i)
+        i += 1
