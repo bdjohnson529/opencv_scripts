@@ -101,21 +101,7 @@ def SaveImage(frame, imageName):
     cv2.imshow("Tracking", frame)
     cv2.imwrite(imageFilePath, frame)
 
-
-def main():
-    videoName = "drone_1"
-
-    tracker = InitializeTracker()
-    video, ok, frame = InitializeVideo()
-    resultsXML, annotationFile = InitializeAnnotation(videoName)
-    errorLog = InitializeErrorLog()
-
-    # Select and initialize bounding box
-    bbox = cv2.selectROI(frame, False)
-    ok = tracker.init(frame, bbox)
-
-    index = 0
-
+def TrackObject(index, video, frame, tracker, resultsXML, errorLog):
     while True:
         index += 1
         imageName = "%08d" % index
@@ -125,7 +111,7 @@ def main():
         frameSize = frame.shape
 
         if not ok:
-            break
+            return index
          
         # Start timer
         timer = cv2.getTickCount()
@@ -145,7 +131,7 @@ def main():
 
             # Save image and annotation
             SaveImage(frame, imageName)
-            results = AddAnnotation(resultsXML, imageName, p1, p2)
+            resultsXML = AddAnnotation(resultsXML, imageName, p1, p2)
 
         else :
             # Tracking failure
@@ -155,13 +141,37 @@ def main():
 
         # Exit if ESC pressed
         k = cv2.waitKey(1) & 0xff
-        if k == 27 : break
-        
+        if k == 32 :
+            repeat = True
+            return repeat, index, resultsXML
+        if k == 27 :
+            repeat = False
+            return repeat, index, resultsXML
 
 
-    mydata = ET.tostring(results)
+def main():
+    videoName = sys.argv[3]
+    video, ok, frame = InitializeVideo()
+    resultsXML, annotationFile = InitializeAnnotation(videoName)
+    errorLog = InitializeErrorLog()
+
+    index = 0
+
+    while True:
+        # Select and initialize bounding box
+        ok, frame = video.read()
+        tracker = InitializeTracker()
+        bbox = cv2.selectROI(frame, False)
+        ok = tracker.init(frame, bbox)
+
+        repeat, index, resultsXML = TrackObject(index, video, frame, tracker, resultsXML, errorLog)
+
+        if repeat == False:
+            break
+
+    # write XML data to file
+    mydata = ET.tostring(resultsXML)
     print mydata
-    # Push tree to file
     annotationFile.write(mydata)  
 
  
