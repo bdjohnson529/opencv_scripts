@@ -97,8 +97,7 @@ def SaveImage(frame, imageName):
     saveDirectory = sys.argv[2]
     imageFilePath = saveDirectory + "img/" + imageName + ".jpg"
 
-    # Display and save result
-    cv2.imshow("Tracking", frame)
+    # Save result
     cv2.imwrite(imageFilePath, frame)
 
 def TrackObject(index, video, frame, tracker, resultsXML, errorLog):
@@ -108,11 +107,11 @@ def TrackObject(index, video, frame, tracker, resultsXML, errorLog):
 
         # Read a new frame
         ok, frame = video.read()
-        frameSize = frame.shape
-
         if not ok:
-            return index
-         
+            repeat = False
+            skip = False
+            break
+
         # Start timer
         timer = cv2.getTickCount()
 
@@ -130,23 +129,55 @@ def TrackObject(index, video, frame, tracker, resultsXML, errorLog):
             cv2.rectangle(frame, p1, p2, (255,0,0), 2, 1)
 
             # Save image and annotation
+            cv2.imshow("Tracking", frame)
             SaveImage(frame, imageName)
             resultsXML = AddAnnotation(resultsXML, imageName, p1, p2)
 
         else :
             # Tracking failure
             cv2.putText(frame, "Tracking failure detected", (100,80), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2)
+            cv2.imshow("Tracking", frame)
             errorLog.write(imageName)
             errorLog.write("\n")
 
-        # Exit if ESC pressed
+        # key press actions
+        # 32 = space, 27 = escape, 114 = s
         k = cv2.waitKey(1) & 0xff
         if k == 32 :
             repeat = True
-            return repeat, index, resultsXML
+            skip = False
+            break
         if k == 27 :
             repeat = False
-            return repeat, index, resultsXML
+            skip = False
+            break
+        if k == 115:
+            repeat = True
+            skip = True
+            break
+
+    return repeat, skip, index, resultsXML
+
+def SkipFrames(video, index):
+    while True:
+        index += 1
+        ok, frame = video.read()
+        cv2.imshow("Tracking", frame)
+        if not ok:
+            repeat = False
+            break
+        
+        # key press actions
+        # 32 = space, 27 = escape, 114 = s
+        k = cv2.waitKey(0) & 0xff
+        if k == 32 :
+            repeat = True
+            break
+        if k == 27:
+            repeat = False
+            break
+
+    return repeat, index
 
 
 def main():
@@ -164,9 +195,11 @@ def main():
         bbox = cv2.selectROI(frame, False)
         ok = tracker.init(frame, bbox)
 
-        repeat, index, resultsXML = TrackObject(index, video, frame, tracker, resultsXML, errorLog)
+        repeat, skip, index, resultsXML = TrackObject(index, video, frame, tracker, resultsXML, errorLog)
 
-        if repeat == False:
+        if skip:
+            repeat, index = SkipFrames(video, index)
+        if not repeat:
             break
 
     # write XML data to file
