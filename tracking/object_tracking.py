@@ -6,8 +6,8 @@
 #####
 
 # input arguments
-# videoFile = sys.argv[1]
-# saveDirectory = sys.argv[2]
+# base directory = /media/oksi/Data/datasets_drone_images/
+# videoName = sys.argv[1]
 
 import cv2
 import sys
@@ -20,7 +20,7 @@ def InitializeTracker():
     tracker_types = ['BOOSTING', 'MIL','KCF', 'TLD', 'MEDIANFLOW', 'GOTURN']
     tracker_type = tracker_types[2]
 
-    # initialize opencv tracker
+    # initialize KCF tracker
     if int(minor_ver) < 3:
         tracker = cv2.Tracker_create(tracker_type)
     else:
@@ -40,8 +40,9 @@ def InitializeTracker():
     return tracker
 
 
-def InitializeVideo():
-    videoFile = sys.argv[1]
+def InitializeVideo(videoName):
+    directory = "/media/oksi/Data/datasets_drone_images/"
+    videoFile = directory + videoName + ".mp4"
     # Read video
     video = cv2.VideoCapture(videoFile)
     if not video.isOpened():
@@ -57,8 +58,8 @@ def InitializeVideo():
 
 
 def InitializeAnnotation(videoName):
-    saveDirectory = sys.argv[2]
-    outfilePath = saveDirectory + videoName + ".xml"
+    directory = "/media/oksi/Data/datasets_drone_images/" 
+    outfilePath = directory + videoName + "/" + videoName + ".xml"
     annotationFile = open(outfilePath, 'w')
 
     results = ET.Element('results')
@@ -93,12 +94,17 @@ def AddAnnotation(results, imageName, p1, p2):
 
     return results
 
-def SaveImage(frame, imageName):
-    saveDirectory = sys.argv[2]
-    imageFilePath = saveDirectory + "img/" + imageName + ".jpg"
+def SaveImage(image, frame, imageName):
+    videoName = sys.argv[1]
+    directory = "/media/oksi/Data/datasets_drone_images/"
+    imageFilePath = directory + videoName + "/img/" + imageName + ".jpg"
+    imageAnnotatedFilePath = directory + videoName + "/img_annotated/" + imageName + ".jpg"
+
+    print imageFilePath
 
     # Save result
-    cv2.imwrite(imageFilePath, frame)
+    cv2.imwrite(imageFilePath, image)
+    cv2.imwrite(imageAnnotatedFilePath, frame)
 
 def TrackObject(index, video, frame, tracker, resultsXML, errorLog):
     while True:
@@ -106,7 +112,8 @@ def TrackObject(index, video, frame, tracker, resultsXML, errorLog):
         imageName = "%08d" % index
 
         # Read a new frame
-        ok, frame = video.read()
+        ok, image = video.read()
+        frame = image.copy()
         if not ok:
             repeat = False
             skip = False
@@ -130,7 +137,7 @@ def TrackObject(index, video, frame, tracker, resultsXML, errorLog):
 
             # Save image and annotation
             cv2.imshow("Tracking", frame)
-            SaveImage(frame, imageName)
+            SaveImage(image, frame, imageName)
             resultsXML = AddAnnotation(resultsXML, imageName, p1, p2)
 
         else :
@@ -166,7 +173,7 @@ def SkipFrames(video, index):
         if not ok:
             repeat = False
             break
-        
+
         # key press actions
         # 32 = space, 27 = escape, 114 = s
         k = cv2.waitKey(0) & 0xff
@@ -181,8 +188,8 @@ def SkipFrames(video, index):
 
 
 def main():
-    videoName = sys.argv[3]
-    video, ok, frame = InitializeVideo()
+    videoName = sys.argv[1]
+    video, ok, frame = InitializeVideo(videoName)
     resultsXML, annotationFile = InitializeAnnotation(videoName)
     errorLog = InitializeErrorLog()
 
@@ -205,9 +212,9 @@ def main():
     # write XML data to file
     mydata = ET.tostring(resultsXML)
     print mydata
-    annotationFile.write(mydata)  
+    annotationFile.write(mydata)
 
- 
+
 
 if __name__ == "__main__":
     main()
