@@ -38,4 +38,8 @@ target_link_libraries(stitching ${OpenCV_LIBS})
 
 # stitching
 add_executable(oksi_stitcher ${PROJECT_SOURCE_DIR}/source/oksi_stitcher.cpp)
-target_link_libraries(oksi_stitcher ${OpenCV_LIBS} boost_system boost_program_options boost_serialization)
+target_link_libraries(oksi_stitcher ${OpenCV_LIBS})
+add_executable(opencv_stitcher ${PROJECT_SOURCE_DIR}/source/opencv_stitcher.cpp)
+target_link_libraries(opencv_stitcher ${OpenCV_LIBS})
+add_executable(og_opencv_stitcher ${PROJECT_SOURCE_DIR}/source/opencv_stitcher_og.cpp)
+target_link_libraries(og_opencv_stitcher ${OpenCV_LIBS})

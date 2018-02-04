@@ -2,8 +2,6 @@
 #include <numeric>
 #include <map>
 #include "opencv2/opencv.hpp"
-
-/**
 #if CV_VERSION_EPOCH == 2
 #include "opencv2/core/core.hpp"
 #include "opencv2/features2d/features2d.hpp"
@@ -12,15 +10,13 @@
 #include "opencv2/nonfree/nonfree.hpp"
 #include "opencv2/imgproc/imgproc.hpp" // For calculating quadrilateral centroid
 #else
-**/
-
-
-#include "opencv2/calib3d.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/core.hpp"
-#include "opencv2/features2d.hpp"
 #include "opencv2/xfeatures2d.hpp"
+#include "opencv2/calib3d.hpp"
+#include "opencv2/core.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/features2d.hpp"
 #include "opencv2/highgui.hpp"
+#endif
 
 using namespace cv;
 using namespace cv::xfeatures2d;
@@ -60,25 +56,23 @@ class OKSI_Stitcher
   Size warped_obj_size; // Canvas size
   //Mat Image_Combined(img_arr[0].cols, img_arr[0].rows, img_arr[0].type(), 0.0);
   Rect bRect;
-  Mat Image_Combined;
+  cv::Mat Image_Combined = cv::Mat(1,1,CV_8UC1);
   std::map<int, Point2f> center_map;
 
 public:
 
 #if CV_VERSION_EPOCH == 2
-  OKSI_Stitcher() : detector(minHessian), obj_corners(poly_size), scene_corners(poly_size), xdataout(2), ydataout(2),
+  OKSI_Stitcher() : detector(minHessian), obj_corners(poly_size), scene_corners(poly_size), xdataout(2), ydataout(2), Image_Combined(1,1,CV_8UC1) {
+  }
 #else
-  OKSI_Stitcher() : obj_corners(poly_size), scene_corners(poly_size), xdataout(2), ydataout(2),
-#endif
-		    // CV_8UC1 is just a guess for initialization
-		    Image_Combined(1,1,CV_8UC1)  {
-#if CV_VERSION_EPOCH != 2
-    //detector(minHessian);
+  OKSI_Stitcher()
+  {
     obj_corners.resize(poly_size);
     scene_corners.resize(poly_size);
-#endif
+    xdataout.resize(2);
+    ydataout.resize(2);
   }
-  
+#endif
 
   void reset() {
     num_img = 0;
@@ -138,7 +132,7 @@ public:
       scene_corners[0] = cvPoint(0,0); scene_corners[1] = cvPoint( img_arr[0].cols, 0 );
       scene_corners[2] = cvPoint( img_arr[0].cols, img_arr[0].rows ); scene_corners[3] = cvPoint( 0, img_arr[0].rows );
       for(int i = 0; i < poly_size; i++)
-	obj_corners_vec[0][i] = scene_corners[i];
+      obj_corners_vec[0][i] = scene_corners[i];
     }
     else {
       int img_idx = num_img-1;
@@ -161,24 +155,24 @@ public:
     
       //-- Quick calculation of max and min distances between keypoints
       for( int i = 0; i < descriptors[img_idx].rows; i++ ) {
-	double dist = matches[i].distance;
-	if( dist < min_dist ) min_dist = dist;
-	if( dist > max_dist ) max_dist = dist;
+      double dist = matches[i].distance;
+      if( dist < min_dist ) min_dist = dist;
+      if( dist > max_dist ) max_dist = dist;
       }
     
       //-- Draw only "good" matches (i.e. whose distance is less than 3*min_dist )
       std::vector< DMatch > good_matches;    
       for( int i = 0; i < descriptors[img_idx].rows; i++ )
-	if( matches[i].distance < 3*min_dist )
-	  good_matches.push_back(matches[i]);
+      if( matches[i].distance < 3*min_dist )
+        good_matches.push_back(matches[i]);
     
       //-- Localize the object
       std::vector<Point2f> obj, scene;
     
       for( int i = 0; i < good_matches.size(); i++ ) {
-	//-- Get the keypoints from the good matches
-	obj.push_back( keypoints[img_idx][ good_matches[i].queryIdx ].pt );
-	scene.push_back( keypoints[img_idx-1][ good_matches[i].trainIdx ].pt );
+      //-- Get the keypoints from the good matches
+      obj.push_back( keypoints[img_idx][ good_matches[i].queryIdx ].pt );
+      scene.push_back( keypoints[img_idx-1][ good_matches[i].trainIdx ].pt );
       }
     
       Mat H = findHomography( obj, scene, CV_RANSAC );    
@@ -188,24 +182,24 @@ public:
       Hs.push_back(H);
       Mat H_total = Eye.clone();
       for( int i = 0; i < Hs.size(); i++)
-	H_total *= Hs[i];
+      H_total *= Hs[i];
       H_totals.push_back(H_total);
     
       // Calculate the corners
       perspectiveTransform( scene_corners, obj_corners, H);
       std::vector<int> xdataout_old = xdataout, ydataout_old = ydataout;
       for( int i = 0; i < poly_size; i++) {
-	xdataout[0] = std::min(xdataout[0],(int)floor(obj_corners[i].x));
-	ydataout[0] = std::min(ydataout[0],(int)floor(obj_corners[i].y));
-	xdataout[1] = std::max(xdataout[1],(int)ceil(obj_corners[i].x));
-	ydataout[1] = std::max(ydataout[1],(int)ceil(obj_corners[i].y));
-	obj_corners_vec[img_idx][i] = obj_corners[i];
+      xdataout[0] = std::min(xdataout[0],(int)floor(obj_corners[i].x));
+      ydataout[0] = std::min(ydataout[0],(int)floor(obj_corners[i].y));
+      xdataout[1] = std::max(xdataout[1],(int)ceil(obj_corners[i].x));
+      ydataout[1] = std::max(ydataout[1],(int)ceil(obj_corners[i].y));
+      obj_corners_vec[img_idx][i] = obj_corners[i];
       }
       if(xdataout[0] < 0) {
-	xoffset[img_idx] = xdataout[0];
+      xoffset[img_idx] = xdataout[0];
       }
       if(ydataout[0] < 0) {
-	yoffset[img_idx] = ydataout[0];
+      yoffset[img_idx] = ydataout[0];
       }
       Mat offset = Mat::eye(3,3,CV_64F);
       double x_net_offset = accumulate(xoffset.begin(), xoffset.end(), 0.0);
@@ -214,15 +208,15 @@ public:
       offset.at<double>(0,2) -= x_net_offset;
       int offset_sign = -1;
       for( int i = 0; i < poly_size; i++) {
-	xdataout[0] = std::min(xdataout[0],(int)floor(obj_corners[i].x+offset_sign*x_net_offset));
-	ydataout[0] = std::min(ydataout[0],(int)floor(obj_corners[i].y+offset_sign*y_net_offset));
-	xdataout[1] = std::max(xdataout[1],(int)ceil(obj_corners[i].x+offset_sign*x_net_offset));
-	ydataout[1] = std::max(ydataout[1],(int)ceil(obj_corners[i].y+offset_sign*y_net_offset));
-	Point2f offset_point = obj_corners[i];
-	offset_point.x=offset_sign*x_net_offset;
-	offset_point.y=offset_sign*y_net_offset;
-	obj_corners_vec_offset[img_idx][i] = obj_corners[i];
-	//std::cout << "Object corner " << obj_corners[i] << "\tScene Corner: " << scene_corners[i] << std::endl;
+      xdataout[0] = std::min(xdataout[0],(int)floor(obj_corners[i].x+offset_sign*x_net_offset));
+      ydataout[0] = std::min(ydataout[0],(int)floor(obj_corners[i].y+offset_sign*y_net_offset));
+      xdataout[1] = std::max(xdataout[1],(int)ceil(obj_corners[i].x+offset_sign*x_net_offset));
+      ydataout[1] = std::max(ydataout[1],(int)ceil(obj_corners[i].y+offset_sign*y_net_offset));
+      Point2f offset_point = obj_corners[i];
+      offset_point.x=offset_sign*x_net_offset;
+      offset_point.y=offset_sign*y_net_offset;
+      obj_corners_vec_offset[img_idx][i] = obj_corners[i];
+      //std::cout << "Object corner " << obj_corners[i] << "\tScene Corner: " << scene_corners[i] << std::endl;
       }
       warped_obj_size.height = ydataout[1]-ydataout[0];
       warped_obj_size.width = xdataout[1]-xdataout[0];
@@ -286,7 +280,7 @@ public:
     std::vector<Point2f> obj_corners_total;
     for(int img_idx = 0; img_idx < num_img; img_idx++) 
       for(int j = 0; j < poly_size; j++) 
-	obj_corners_total.push_back(obj_corners_vec[img_idx][j]);
+    obj_corners_total.push_back(obj_corners_vec[img_idx][j]);
     bRect = boundingRect(obj_corners_total);
     Rect bRect_subimage = bRect;
     if(bRect_subimage.x < 0) {
@@ -326,20 +320,24 @@ public:
     std::vector<Point2f> center_arr(1,center), center_t_arr;
     for(int img_idx = 0; img_idx < num_img; img_idx++) {
       for(int j = 0; j < poly_size; j++) {
-	obj_corners_vec_offset[img_idx][j].x = obj_corners_vec[img_idx][j].x - bRect.x;
-	obj_corners_vec_offset[img_idx][j].y = obj_corners_vec[img_idx][j].y - bRect.y;
+      obj_corners_vec_offset[img_idx][j].x = obj_corners_vec[img_idx][j].x - bRect.x;
+      obj_corners_vec_offset[img_idx][j].y = obj_corners_vec[img_idx][j].y - bRect.y;
       }
       image_center_test[img_idx] = pointPolygonTest(obj_corners_vec_offset[img_idx], center, false);
       // If the center of the image lies within the corresponding image,
       // convert that location into the frame of the untransformed original image
       if(image_center_test[img_idx] >= 0) {
-	Mat offset = Eye.clone();
-	offset.at<double>(0,2) -= bRect.x;
-	offset.at<double>(1,2) -= bRect.y;
-	Mat inv_offset_homog = (offset*Hs[img_idx-1]).inv();
-	perspectiveTransform(center_arr, center_t_arr, inv_offset_homog);
-	//std::cout << "New center. Image Index: " << img_idx << "\tCenter location: " << center_t_arr[0] << std::endl;
-	center_map[img_idx] = center_t_arr[0];
+      Mat offset = Eye.clone();
+      offset.at<double>(0,2) -= bRect.x;
+      offset.at<double>(1,2) -= bRect.y;
+      Mat inv_offset_homog;
+      if(img_idx == 0)
+        inv_offset_homog = offset.inv();
+      else
+        inv_offset_homog = (offset*Hs[img_idx-1]).inv();
+      perspectiveTransform(center_arr, center_t_arr, inv_offset_homog);
+      //std::cout << "New center. Image Index: " << img_idx << "\tCenter location: " << center_t_arr[0] << std::endl;
+      center_map[img_idx] = center_t_arr[0];
       }
     }
     
@@ -355,6 +353,7 @@ public:
   Mat get_image() { return Image_Combined; }
 
   std::map<int, Point2f> get_centers() { return center_map; }
+  
 private:
 
 };
