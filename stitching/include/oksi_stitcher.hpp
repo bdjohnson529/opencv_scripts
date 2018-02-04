@@ -15,15 +15,15 @@
 **/
 
 
-#include "opencv2/xfeatures2d.hpp"
 #include "opencv2/calib3d.hpp"
-#include "opencv2/core.hpp"
 #include "opencv2/imgproc.hpp"
+#include "opencv2/core.hpp"
 #include "opencv2/features2d.hpp"
+#include "opencv2/xfeatures2d.hpp"
 #include "opencv2/highgui.hpp"
 
 using namespace cv;
-//using namespace cv::xfeatures2d;
+using namespace cv::xfeatures2d;
 
 class OKSI_Stitcher
 {
@@ -34,7 +34,7 @@ class OKSI_Stitcher
   SurfFeatureDetector detector;
   SurfDescriptorExtractor extractor;
 #else
-  Ptr<SURF> detector; // = cv::SURF::create( minHessian );
+  Ptr<SURF> detector = SURF::create( minHessian );
 #endif
   std::vector<Point2f> obj_corners, scene_corners;
   Mat H_total = Mat::eye(3,3,CV_64F);
@@ -73,7 +73,7 @@ public:
 		    // CV_8UC1 is just a guess for initialization
 		    Image_Combined(1,1,CV_8UC1)  {
 #if CV_VERSION_EPOCH != 2
-    detector(minHessian)
+    //detector(minHessian);
     obj_corners.resize(poly_size);
     scene_corners.resize(poly_size);
 #endif
