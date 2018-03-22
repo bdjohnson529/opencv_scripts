@@ -12,8 +12,8 @@ import os
 
 # DEBUGGING - manually enter matrix and distortion
 DIM = (1200, 1200)
-K = np.array([[726.49727255,0,945.7804803],[0,727.06050889,603.13960861],[0,0,1]])
-D = np.array([[-0.03016212],[-0.02889801],[0.0337639],[-0.0153955]])
+K = np.array([[742.78609577, 0, 587.0482709019853],[0,742.84644507,602.695459],[0,0,1]])
+D = np.array([[-0.05300085],[0.03509449],[-0.05077912],[0.0380077]])
 
 # get intrinsics and distortion from input file
 #input_file = sys.argv[1]

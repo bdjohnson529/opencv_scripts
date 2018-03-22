@@ -3,10 +3,10 @@
 <Settings>
   <!-- Number of inner corners per a item row and column. (square, circle) -->
   <BoardSize_Width>6</BoardSize_Width>
-  <BoardSize_Height>9</BoardSize_Height>
+  <BoardSize_Height>8</BoardSize_Height>
 
   <!-- The size of a square in some user defined metric system (pixel, millimeter)-->
-  <Square_Size>50</Square_Size>
+  <Square_Size>100</Square_Size>
 
   <!-- The type of input used for camera calibration. One of: CHESSBOARD CIRCLES_GRID ASYMMETRIC_CIRCLES_GRID -->
   <Calibrate_Pattern>"CHESSBOARD"</Calibrate_Pattern>
@@ -25,7 +25,7 @@
 
   <!-- INPUT SETTINGS:
 	How many frames to use, for calibration. -->
-  <Calibrate_NrOfFrameToUse>135</Calibrate_NrOfFrameToUse>
+  <Calibrate_NrOfFrameToUse>60</Calibrate_NrOfFrameToUse>
   <!-- Consider only fy as a free parameter, the ratio fx/fy stays the same as in the input cameraMatrix.
 	   Use or not setting. 0 - False Non-Zero - True-->
   <Calibrate_FixAspectRatio> 0 </Calibrate_FixAspectRatio>
