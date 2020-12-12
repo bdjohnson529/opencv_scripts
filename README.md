@@ -7,8 +7,6 @@
 
 API reference can be found on the [OpenCV website](https://docs.opencv.org/3.4.0/)
 
-# Programs:
-
 ## Camera Calibration
 The C++ program is not maintained. Likely the CMakeLists needs to be modified, and the OpenCV C++ package needs to be installed for the code to work.  Once CMake has been set up, the program can be built with g++ or another compiler.
 ```
