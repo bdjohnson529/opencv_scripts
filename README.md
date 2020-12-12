@@ -1,13 +1,14 @@
-# This is a toolbox for OpenCV.
-#### Builds were tested in Ubuntu 16.04 on a 64 bit processor.
-[OpenCV](https://github.com/opencv/opencv) should be built with the [contrib](https://github.com/opencv/opencv_contrib) modules for full support. Run [`install.sh`](install.sh) to install to fully install the latest OpenCV release.
+# This is a computer vision toolbox.
 
-## To check OpenCV version:
-	$ pkg-config --modversion opencv
+This project leverages [OpenCV](https://opencv.org/about/), an "open source computer vision and machine learning software library." OpenCV is the most popular open-source library used by computer vision researchers. [OpenCV](https://github.com/opencv/opencv) should be built with the [contrib](https://github.com/opencv/opencv_contrib) modules for full support. API reference can be found on the [OpenCV website](https://docs.opencv.org/3.4.0/).
 
-API reference can be found on the [OpenCV website](https://docs.opencv.org/3.4.0/)
 
-# Programs:
+## Installation
+| Script | Description| 
+| -- | -- |
+|[`install/install_cpp.sh`](install.sh) | C++ installation |
+|[`install/install_python.sh`](install.sh) | Python installation |
+
 
 ## Camera Calibration
 The C++ program is not maintained. Likely the CMakeLists needs to be modified, and the OpenCV C++ package needs to be installed for the code to work.  Once CMake has been set up, the program can be built with g++ or another compiler.
