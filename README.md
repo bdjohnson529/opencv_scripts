@@ -8,8 +8,8 @@ This project leverages [OpenCV](https://opencv.org/about/), an "open source comp
 ## Installation
 | Script | Description| 
 | -- | -- |
-|[`install/install_cpp.sh`](install.sh) | C++ installation |
-|[`install/install_python.sh`](install.sh) | Python installation |
+|[`install/install_cpp.sh`](install/install_cpp.sh) | C++ installation |
+|[`install/install_python.sh`](install/install_python.sh) | Python installation |
 
 
 ## Camera Calibration
