@@ -15,17 +15,17 @@ $g++ -ggdb camera_calibration.cpp -o camera_calibration `pkg-config --cflags --l
 
 The Python program is maintained. The following scripts are located in the folder [`calibration/python`](calibration/python).
 
-1. Camera calibration.
+1. **Camera calibration.**
 	* Supported for rectilinear and fisheye lenses.
 	* `python calibrate_fisheye.py /path/to/image/directory/`
 	* `python calibrate.py /path/to/image/directory/`
 
-2. Image undistortion.
+2. **Image undistortion.**
 	* Supported for rectilinear and fisheye lenses.
 	* `python undistort_fisheye.py /path/to/image/directory/`
 	* `python undistort.py /path/to/image/directory/`
 
-3. Read camera intrinsics.
+3. **Read camera intrinsics.**
 	* `python read_intrinsics.py`
 
 ## Inpainting
