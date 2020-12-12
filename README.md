@@ -2,7 +2,7 @@
 #### Builds were tested in Ubuntu 16.04 on a 64 bit processor.
 [OpenCV](https://github.com/opencv/opencv) should be built with the [contrib](https://github.com/opencv/opencv_contrib) modules for full support. Run [`install.sh`](install.sh) to install to fully install the latest OpenCV release.
 
-## To check OpenCV version:
+#### To check OpenCV version:
 	$ pkg-config --modversion opencv
 
 API reference can be found on the [OpenCV website](https://docs.opencv.org/3.4.0/)
