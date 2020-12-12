@@ -30,12 +30,12 @@ The Python program is maintained. The following scripts are located in the folde
 
 ## Inpainting
 
-1. Inpainting.
+1. **Inpainting.**
 	* Custom code to inpaint over bounding boxes drawn in CV.
 
 
 ## Object Tracking
 
-1. Tracking.
+1. **Tracking.**
 	* Single object tracking. User inputs a bounding box defining the object. Files are saved with bounding box and PASCAL VOC XML file used for deep learning.
 	* `python object_tracking.py /path/to/video/file/ /path/to/save/directory/`
