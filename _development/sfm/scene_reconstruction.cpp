@@ -21,7 +21,7 @@ static void help() {
       << "\n------------------------------------------------------------------------------------\n"
       << " This program shows the multiview reconstruction capabilities in the \n"
       << " OpenCV Structure From Motion (SFM) module.\n"
-      << " It reconstruct a scene from a set of 2D images \n"
+      << " It reconstructs a scene from a set of 2D images \n"
       << " Usage:\n"
       << "        example_sfm_scene_reconstruction <path_to_file> <f> <cx> <cy>\n"
       << " where: path_to_file is the file absolute path into your system which contains\n"

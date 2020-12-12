@@ -1,5 +1,5 @@
 #####
-# OG code pulled from https://www.learnopencv.com/object-tracking-using-opencv-cpp-python/
+# Modified from https://www.learnopencv.com/object-tracking-using-opencv-cpp-python/
 # Pascal 2012 format pulled from http://host.robots.ox.ac.uk/pascal/VOC/voc2012/htmldoc/index.html
 # Modified by Ben Johnson
 # January 3, 2017
