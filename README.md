@@ -44,3 +44,9 @@ The Python program is maintained. The following scripts are located in the folde
 1. **Tracking.**
 	* Single object tracking. User inputs a bounding box defining the object. Files are saved with bounding box and PASCAL VOC XML file used for deep learning.
 	* `python object_tracking.py /path/to/video/file/ /path/to/save/directory/`
+
+## Aerial Perspective Transformation
+
+[This library](aerialtransform/) projects aerial imagery onto the ground, so images can be overlayed on a satellite map. You can use the functions in this library to project aerial images taken by a drone onto Google Earth tiles. To perform the transformation, you will need imagery, GPS and attitude measurements. We mounted a camera, IMU and GPS receiver on a drone to obtain our datasets.
+
+The library is built in C++.
