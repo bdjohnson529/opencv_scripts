@@ -1,6 +1,6 @@
 # Aerial Perspective Transform
 
-This library projects aerial imagery onto the ground, so images can be overlayed on a satellite map. You can use the functions in this library to project aerial images taken by a drone onto Google Earth tiles. To perform the transformation, you will need imagery, GPS and attitude measurements. We mounted a camera, IMU and GPS receiver on a drone to obtain our datasets.
+This program projects aerial imagery onto the ground, so images can be overlayed on a satellite map. You can use the functions in this library to project aerial images taken by a drone onto Google Earth tiles. To perform the transformation, you will need imagery, GPS and attitude measurements. We mounted a camera, IMU and GPS receiver on a drone to obtain our datasets.
 
 ### Algorithm
 
