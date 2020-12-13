@@ -47,6 +47,6 @@ The Python program is maintained. The following scripts are located in the folde
 
 ## Aerial Perspective Transformation
 
-[This library](aerialtransform/) projects aerial imagery onto the ground, so images can be overlayed on a satellite map. You can use the functions in this library to project aerial images taken by a drone onto Google Earth tiles. To perform the transformation, you will need imagery, GPS and attitude measurements. We mounted a camera, IMU and GPS receiver on a drone to obtain our datasets.
+The [aerialtransform](aerialtransform/) library projects aerial imagery onto the ground, so images can be overlayed on a satellite map. You can use the functions in this library to project aerial images taken by a drone onto Google Earth tiles. To perform the transformation, you will need imagery, GPS and attitude measurements. We mounted a camera, IMU and GPS receiver on a drone to obtain our datasets.
 
 The library is built in C++.
